@@ -10,6 +10,7 @@ import { BenchmarkChart } from "./charts/BenchmarkChart";
 import { InversePosteriorPlot } from "./charts/InversePosteriorPlot";
 import { SensorPlacementMap } from "./charts/SensorPlacementMap";
 import { PretrainEfficiencyPlot } from "./charts/PretrainEfficiencyPlot";
+import { DocumentationTab } from "./charts/DocumentationTab";
 
 import {
   fetchHealth,
@@ -23,12 +24,12 @@ import {
   fetchExportReport,
 } from "./services/api";
 
-import { Activity, Zap, Shield, Globe, Rocket } from "lucide-react";
+import { Activity, Zap, Shield, Globe, Rocket, BookOpen } from "lucide-react";
 
 export function App() {
   const [deviceStatus, setDeviceStatus] = useState("cpu");
   const [selectedModel, setSelectedModel] = useState("pinn_rar");
-  const [activeTab, setActiveTab] = useState<"train" | "bench" | "inverse" | "gno" | "pretrain">("train");
+  const [activeTab, setActiveTab] = useState<"train" | "bench" | "inverse" | "gno" | "pretrain" | "docs">("train");
   const [isMathOpen, setIsMathOpen] = useState(false);
 
   // Hyperparameters
@@ -162,6 +163,13 @@ export function App() {
             >
               <Rocket size={14} /> Pretrain & Latency
             </button>
+            <button
+              className={`btn-secondary ${activeTab === "docs" ? "btn-primary" : ""}`}
+              onClick={() => setActiveTab("docs")}
+              style={{ fontSize: "0.825rem", padding: "6px 12px" }}
+            >
+              <BookOpen size={14} /> Docs & Specs
+            </button>
           </div>
 
           {/* Active Tab Content */}
@@ -192,6 +200,8 @@ export function App() {
           {activeTab === "gno" && boedData && <SensorPlacementMap boedData={boedData} />}
 
           {activeTab === "pretrain" && pretrainData && <PretrainEfficiencyPlot pretrainData={pretrainData} />}
+
+          {activeTab === "docs" && <DocumentationTab />}
         </main>
 
         <ParameterInspector
