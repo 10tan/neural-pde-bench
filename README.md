@@ -5,9 +5,17 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-green.svg)](https://fastapi.tiangolo.com/)
 [![React 18](https://img.shields.io/badge/React-18-61DAFB.svg)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-8.3%2B-646CFF.svg)](https://vitejs.dev/)
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live-brightgreen.svg)](https://frontend-blush-eight-92.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 An advanced, research-grade **Physics-Informed Neural Network (PINN)** and **Operator Learning (FNO, DeepONet, GNO)** software platform for solving forward/inverse Partial Differential Equations (PDEs) with full **Uncertainty Quantification (UQ)**, Bayesian inference, and score-based diffusion modeling.
+
+---
+
+## 🌐 Live Deployments & Repository Links
+- 🚀 **Vercel Live Production App**: [https://frontend-blush-eight-92.vercel.app](https://frontend-blush-eight-92.vercel.app)
+- ⚡ **Vercel Direct Deployment URL**: [https://frontend-phersmw41-10tans-projects.vercel.app](https://frontend-phersmw41-10tans-projects.vercel.app)
+- 🐙 **GitHub Repository**: [https://github.com/10tan/neural-pde-bench](https://github.com/10tan/neural-pde-bench)
 
 ---
 
@@ -25,8 +33,7 @@ An advanced, research-grade **Physics-Informed Neural Network (PINN)** and **Ope
 - [System Architecture & Flowchart](#-system-architecture--flowchart)
 - [API Reference & Endpoint Telemetry](#-api-reference--endpoint-telemetry)
 - [Verification & Validation (V&V) Benchmark Matrix](#-verification--validation-vv-benchmark-matrix)
-- [Installation & Quick Start](#-installation--quick-start)
-- [Vercel Deployment Guide](#-vercel-deployment-guide)
+- [Installation & Local Quick Start](#-installation--local-quick-start)
 - [License](#-license)
 
 ---
@@ -144,7 +151,7 @@ graph TD
 
 ---
 
-## 💻 Installation & Quick Start
+## 💻 Installation & Local Quick Start
 
 ### Prerequisites
 - Python 3.11+
@@ -164,15 +171,6 @@ cd frontend
 npm install
 npm run dev
 ```
-
----
-
-## ☁️ Vercel Deployment Guide
-
-1. Push your changes to GitHub: `https://github.com/10tan/neural-pde-bench`
-2. Go to **[Vercel New Project](https://vercel.com/new)**.
-3. Import `10tan/neural-pde-bench`.
-4. Click **Deploy** (Vercel automatically detects `vercel.json` and builds `frontend/dist`).
 
 ---
 
