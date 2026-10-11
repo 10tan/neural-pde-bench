@@ -83,15 +83,15 @@ $$
 Assuming the manufactured exact state:
 
 $$
-u^*(x,t) = \sin(\pi x) \cos(\omega t)
+u^{\ast}(x,t) = \sin(\pi x) \cos(\omega t)
 $$
 
 The analytical source forcing term $f(x,t)$ is derived as follows:
 
 $$
 \begin{aligned}
-\frac{\partial u^*}{\partial t} &= -\omega \sin(\pi x) \sin(\omega t) \\
-\frac{\partial^2 u^*}{\partial x^2} &= -\pi^2 \sin(\pi x) \cos(\omega t) \\
+\frac{\partial u^{\ast}}{\partial t} &= -\omega \sin(\pi x) \sin(\omega t) \\
+\frac{\partial^2 u^{\ast}}{\partial x^2} &= -\pi^2 \sin(\pi x) \cos(\omega t) \\
 f(x,t) &= -\omega \sin(\pi x) \sin(\omega t) + \alpha \pi^2 \sin(\pi x) \cos(\omega t)
 \end{aligned}
 $$
@@ -102,7 +102,7 @@ $$
 -\Delta u = -\left(\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2}\right) = f(x,y), \quad (x,y) \in [0, 1]^2
 $$
 
-Given the manufactured solution $u^*(x,y) = \sin(\pi x) \sin(\pi y)$, the exact source term is:
+Given the manufactured solution $u^{\ast}(x,y) = \sin(\pi x) \sin(\pi y)$, the exact source term is:
 
 $$
 f(x,y) = 2\pi^2 \sin(\pi x) \sin(\pi y)
@@ -132,15 +132,15 @@ $$
 #### Residual-Based Adaptive Refinement (RAR) Algorithm
 Rather than uniform Monte Carlo collocation sampling, RAR dynamically densifies the collocation set in regions with high local residual:
 1. Train $u_\theta$ on the current collocation set $\mathcal{S}_k$.
-2. Uniformly sample candidate points across the space-time domain $\mathcal{S}_{cand} \sim \mathcal{U}(\Omega \times [0, T])$.
+2. Uniformly sample candidate points across the space-time domain $\mathcal{S}_{\text{cand}} \sim \mathcal{U}(\Omega \times [0, T])$.
 3. Compute residual magnitude $R(\mathbf{x}) = |\mathcal{N}[u_\theta(\mathbf{x})]|$.
 4. Select the top $K$ points satisfying:
 
 $$
-\mathbf{x}^* = \arg\max_{\mathbf{x} \in \mathcal{S}_{cand}} R(\mathbf{x})
+\mathbf{x}^{\ast} = \arg\max_{\mathbf{x} \in \mathcal{S}_{\text{cand}}} R(\mathbf{x})
 $$
 
-5. Augment the collocation set: $\mathcal{S}_{k+1} = \mathcal{S}_k \cup \{\mathbf{x}^*_{1:K}\}$, and resume gradient descent.
+5. Augment the collocation set: $\mathcal{S}_{k+1} = \mathcal{S}_k \cup \{\mathbf{x}^{\ast}_{1:K}\}$, and resume gradient descent.
 
 ---
 
@@ -148,21 +148,21 @@ $$
 For multi-scale problems or localized gradients, the physical domain $\Omega$ is decomposed into non-overlapping subdomains:
 
 $$
-\Omega = \Omega_1 \cup \Omega_2, \quad \Gamma_{int} = \overline{\Omega}_1 \cap \overline{\Omega}_2
+\Omega = \Omega_1 \cup \Omega_2, \quad \Gamma_{\text{int}} = \overline{\Omega}_1 \cap \overline{\Omega}_2
 $$
 
-Subdomain-specific neural networks $u_{\theta 1}$ and $u_{\theta 2}$ are trained in parallel, coupled across the internal interface $\Gamma_{int}$ through $C^0$ value and $C^1$ flux continuity penalties:
+Subdomain-specific neural networks $u_{\theta 1}$ and $u_{\theta 2}$ are trained in parallel, coupled across the internal interface $\Gamma_{\text{int}}$ through $C^0$ value and $C^1$ flux continuity penalties:
 
 $$
-\mathcal{L}_{XPINN}(\theta_1, \theta_2) = \mathcal{L}_{\Omega_1}(\theta_1) + \mathcal{L}_{\Omega_2}(\theta_2) + \lambda_{val} \mathcal{L}_{interface}^{val} + \lambda_{flux} \mathcal{L}_{interface}^{flux}
+\mathcal{L}_{\text{XPINN}}(\theta_1, \theta_2) = \mathcal{L}_{\Omega_1}(\theta_1) + \mathcal{L}_{\Omega_2}(\theta_2) + \lambda_{\text{val}} \mathcal{L}_{\text{interface}}^{\text{val}} + \lambda_{\text{flux}} \mathcal{L}_{\text{interface}}^{\text{flux}}
 $$
 
 Where interface penalties enforce transmission conditions:
 
 $$
 \begin{aligned}
-\mathcal{L}_{interface}^{val} &= \frac{1}{N_{int}} \sum_{i=1}^{N_{int}} \left\| u_{\theta 1}(\mathbf{x}_i^{int}) - u_{\theta 2}(\mathbf{x}_i^{int}) \right\|_2^2 \\
-\mathcal{L}_{interface}^{flux} &= \frac{1}{N_{int}} \sum_{i=1}^{N_{int}} \left\| \mathbf{n} \cdot \nabla u_{\theta 1}(\mathbf{x}_i^{int}) - \mathbf{n} \cdot \nabla u_{\theta 2}(\mathbf{x}_i^{int}) \right\|_2^2
+\mathcal{L}_{\text{interface}}^{\text{val}} &= \frac{1}{N_{\text{int}}} \sum_{i=1}^{N_{\text{int}}} \left\| u_{\theta 1}(\mathbf{x}_i^{\text{int}}) - u_{\theta 2}(\mathbf{x}_i^{\text{int}}) \right\|_2^2 \\
+\mathcal{L}_{\text{interface}}^{\text{flux}} &= \frac{1}{N_{\text{int}}} \sum_{i=1}^{N_{\text{int}}} \left\| \mathbf{n} \cdot \nabla u_{\theta 1}(\mathbf{x}_i^{\text{int}}) - \mathbf{n} \cdot \nabla u_{\theta 2}(\mathbf{x}_i^{\text{int}}) \right\|_2^2
 \end{aligned}
 $$
 
@@ -188,7 +188,7 @@ $$
 $$
 
 - $\mathcal{F}$ is the forward Discrete Fourier Transform (`torch.fft.rfft`).
-- $R_\phi \in \mathbb{C}^{k_{max} \times d_v \times d_v}$ is a learnable complex tensor truncating higher Fourier modes beyond $k_{max}$.
+- $R_\phi \in \mathbb{C}^{k_{\max} \times d_v \times d_v}$ is a learnable complex tensor truncating higher Fourier modes beyond $k_{\max}$.
 - $\mathcal{F}^{-1}$ is the inverse Discrete Fourier Transform (`torch.fft.irfft`).
 
 Because the spectral weights $R_\phi$ are parameterized in the frequency domain, the learned operator is continuous and resolution-invariant.
@@ -218,7 +218,7 @@ $$
 Spatial message passing propagates local differential operators across graph neighborhoods:
 
 $$
-h_i^{(l+1)} = \sigma \left( W_{self} h_i^{(l)} + \frac{1}{|\mathcal{N}(i)|} \sum_{j \in \mathcal{N}(i)} \kappa_\phi(x_i, x_j) h_j^{(l)} \right)
+h_i^{(l+1)} = \sigma \left( W_{\text{self}} h_i^{(l)} + \frac{1}{|\mathcal{N}(i)|} \sum_{j \in \mathcal{N}(i)} \kappa_\phi(x_i, x_j) h_j^{(l)} \right)
 $$
 
 Where $\kappa_\phi(x_i, x_j)$ parameterizes the continuous kernel over pairwise coordinate offsets, preserving rotational and translational symmetries.
@@ -249,15 +249,15 @@ For inverse parameter fields $E(x)$ in $-\frac{d}{dx}\left(E(x)\frac{du}{dx}\rig
 
 $$
 \begin{aligned}
-H(E, p) &= U(E) + \frac{1}{2} p^T M^{-1} p \\
-U(E) &= -\log p(\mathcal{D}_{obs} | E) - \log p(E)
+H(E, p) &= U(E) + \frac{1}{2} p^{\top} M^{-1} p \\
+U(E) &= -\log p(\mathcal{D}_{\text{obs}} | E) - \log p(E)
 \end{aligned}
 $$
 
 Hamiltonian trajectories are integrated via symplectic leapfrog steps, followed by a Metropolis-Hastings acceptance step:
 
 $$
-\alpha = \min\left(1, \; \exp\left(-H(E^*, p^*) + H(E, p)\right)\right)
+\alpha = \min\left(1, \; \exp\left(-H(E^{\ast}, p^{\ast}) + H(E, p)\right)\right)
 $$
 
 ---
@@ -282,17 +282,17 @@ The conditional score function $\nabla_x \log p_t(x | y)$ is estimated using a t
 ---
 
 ### 9. Multi-Fidelity Operator Learning
-When high-fidelity simulation or experimental data is scarce, Multi-Fidelity DeepONet leverages abundant low-fidelity data $u_{lo}$ (e.g. coarse-mesh FDM) and sparse high-fidelity data $u_{hi}$:
+When high-fidelity simulation or experimental data is scarce, Multi-Fidelity DeepONet leverages abundant low-fidelity data $u_{\text{lo}}$ (e.g. coarse-mesh FDM) and sparse high-fidelity data $u_{\text{hi}}$:
 
 $$
-u_{hi}(x) = \alpha(x) \cdot u_{lo}(x) + \delta(x)
+u_{\text{hi}}(x) = \alpha(x) \cdot u_{\text{lo}}(x) + \delta(x)
 $$
 
 - $\alpha(x)$ is a multiplicative cross-fidelity scaling factor.
 - $\delta(x)$ is an additive residual correction network parameterized as an MLP:
 
 $$
-\mathcal{L}_{MF}(\theta) = \frac{1}{N_{hi}} \sum_{i=1}^{N_{hi}} \left\| u_{hi}(x_i) - \left( \alpha u_{lo}(x_i) + \delta_\theta(x_i) \right) \right\|_2^2
+\mathcal{L}_{\text{MF}}(\theta) = \frac{1}{N_{\text{hi}}} \sum_{i=1}^{N_{\text{hi}}} \left\| u_{\text{hi}}(x_i) - \left( \alpha u_{\text{lo}}(x_i) + \delta_\theta(x_i) \right) \right\|_2^2
 $$
 
 ---
@@ -300,22 +300,22 @@ $$
 ### 10. Bayesian Optimal Experimental Design (BOED)
 BOED automates active sensor placement to minimize parameter uncertainty with minimal sensor installations.
 
-The optimal sensor design $d^* = \{x_1, \dots, x_k\}$ maximizes the Expected Information Gain (EIG), defined as the expected mutual information between the parameter state $\theta$ and future sensor observations $y$:
+The optimal sensor design $d^{\ast} = \{x_1, \dots, x_k\}$ maximizes the Expected Information Gain (EIG), defined as the expected mutual information between the parameter state $\theta$ and future sensor observations $y$:
 
 $$
-d^* = \arg\max_{d \in \mathcal{D}} \mathbb{E}_{y | d} \left[ D_{KL} \left( p(\theta | y, d) \;||\; p(\theta) \right) \right]
+d^{\ast} = \arg\max_{d \in \mathcal{D}} \mathbb{E}_{y | d} \left[ D_{KL} \left( p(\theta | y, d) \;||\; p(\theta) \right) \right]
 $$
 
 Using spatial Gaussian process covariance kernel updates:
 
 $$
-\text{Var}[E(x) | d] = k(x, x) - \mathbf{k}(x, d) \left[ \mathbf{K}(d, d) + \sigma_{noise}^2 I \right]^{-1} \mathbf{k}(d, x)
+\text{Var}[E(x) | d] = k(x, x) - \mathbf{k}(x, d) \left[ \mathbf{K}(d, d) + \sigma_{\text{noise}}^2 I \right]^{-1} \mathbf{k}(d, x)
 $$
 
 Sensors are sequentially placed at the global spatial maximum of the posterior variance field:
 
 $$
-x_{next} = \arg\max_{x \in \Omega} \text{Var}[E(x) | d_{current}]
+x_{\text{next}} = \arg\max_{x \in \Omega} \text{Var}[E(x) | d_{\text{current}}]
 $$
 
 ---
@@ -329,7 +329,7 @@ A shared operator foundation backbone is pretrained on synthetic trajectories ac
 Fine-tuning downstream tasks on novel coefficient regimes exhibits steep power-law data-efficiency gains:
 
 $$
-\text{Error}(N) \approx C \cdot N^{-\beta_{pretrain}}, \quad \beta_{pretrain} \gg \beta_{scratch}
+\text{Error}(N) \approx C \cdot N^{-\beta_{\text{pretrain}}}, \quad \beta_{\text{pretrain}} \gg \beta_{\text{scratch}}
 $$
 
 ---
