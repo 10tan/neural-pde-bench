@@ -12,9 +12,8 @@ An enterprise-grade, research-ready scientific machine learning platform integra
 
 ---
 
-## 🌐 Live Deployments & Repository
-- 🚀 **Vercel Production Web App**: [https://neural-pde-bench.vercel.app](https://neural-pde-bench.vercel.app)
-- ⚡ **Vercel Team Deployment URL**: [https://neural-pde-bench-10tans-projects.vercel.app](https://neural-pde-bench-10tans-projects.vercel.app)
+## 🌐 Live Deployment & Repository
+- 🚀 **Live Web Application**: [https://neural-pde-bench.vercel.app](https://neural-pde-bench.vercel.app)
 - 🐙 **GitHub Repository**: [https://github.com/10tan/neural-pde-bench](https://github.com/10tan/neural-pde-bench)
 
 ---
@@ -76,20 +75,38 @@ An enterprise-grade, research-ready scientific machine learning platform integra
 To establish mathematically verifiable ground truths without numerical discretization errors, manufactured analytical solutions are injected into the governing PDE:
 
 For the **1D Transient Heat Equation**:
-$$\mathcal{N}[u] = \frac{\partial u}{\partial t} - \alpha \frac{\partial^2 u}{\partial x^2} - f(x,t) = 0, \quad x \in [0, 1], \; t \in [0, T]$$
+
+$$
+\mathcal{N}[u] = \frac{\partial u}{\partial t} - \alpha \frac{\partial^2 u}{\partial x^2} - f(x,t) = 0, \quad x \in [0, 1], \; t \in [0, T]
+$$
 
 Assuming the manufactured exact state:
-$$u^*(x,t) = \sin(\pi x) \cos(\omega t)$$
 
-The analytical source forcing term $f(x,t)$ is rigorously derived:
-$$\frac{\partial u^*}{\partial t} = -\omega \sin(\pi x) \sin(\omega t)$$
-$$\frac{\partial^2 u^*}{\partial x^2} = -\pi^2 \sin(\pi x) \cos(\omega t)$$
-$$f(x,t) = -\omega \sin(\pi x) \sin(\omega t) + \alpha \pi^2 \sin(\pi x) \cos(\omega t)$$
+$$
+u^*(x,t) = \sin(\pi x) \cos(\omega t)
+$$
+
+The analytical source forcing term $f(x,t)$ is derived as follows:
+
+$$
+\begin{aligned}
+\frac{\partial u^*}{\partial t} &= -\omega \sin(\pi x) \sin(\omega t) \\
+\frac{\partial^2 u^*}{\partial x^2} &= -\pi^2 \sin(\pi x) \cos(\omega t) \\
+f(x,t) &= -\omega \sin(\pi x) \sin(\omega t) + \alpha \pi^2 \sin(\pi x) \cos(\omega t)
+\end{aligned}
+$$
 
 For the **2D Poisson Equation**:
-$$-\Delta u = -\left(\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2}\right) = f(x,y), \quad (x,y) \in [0, 1]^2$$
-Given manufactured solution $u^*(x,y) = \sin(\pi x) \sin(\pi y)$, the exact source is:
-$$f(x,y) = 2\pi^2 \sin(\pi x) \sin(\pi y)$$
+
+$$
+-\Delta u = -\left(\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2}\right) = f(x,y), \quad (x,y) \in [0, 1]^2
+$$
+
+Given the manufactured solution $u^*(x,y) = \sin(\pi x) \sin(\pi y)$, the exact source term is:
+
+$$
+f(x,y) = 2\pi^2 \sin(\pi x) \sin(\pi y)
+$$
 
 ---
 
@@ -97,56 +114,93 @@ $$f(x,y) = 2\pi^2 \sin(\pi x) \sin(\pi y)$$
 A deep multilayer perceptron $u_\theta(\mathbf{x})$, parameterized by weights and biases $\theta$, maps space-time coordinates $\mathbf{x} = (x, t)$ to the state scalar $u$.
 
 The composite objective function balances residual physics, initial conditions, and boundary conditions:
-$$\mathcal{L}(\theta) = \lambda_{PDE} \mathcal{L}_{PDE}(\theta) + \lambda_{IC} \mathcal{L}_{IC}(\theta) + \lambda_{BC} \mathcal{L}_{BC}(\theta)$$
 
-Where automatic differentiation (reverse-mode autograd) computes exact differential operators:
-$$\mathcal{L}_{PDE}(\theta) = \frac{1}{N_f} \sum_{i=1}^{N_f} \left\| \frac{\partial u_\theta}{\partial t}(x_i, t_i) - \alpha \frac{\partial^2 u_\theta}{\partial x^2}(x_i, t_i) - f(x_i, t_i) \right\|_2^2$$
-$$\mathcal{L}_{IC}(\theta) = \frac{1}{N_{ic}} \sum_{i=1}^{N_{ic}} \left\| u_\theta(x_i, 0) - u_0(x_i) \right\|_2^2$$
-$$\mathcal{L}_{BC}(\theta) = \frac{1}{N_{bc}} \sum_{i=1}^{N_{bc}} \left( \left\| u_\theta(0, t_i) - g_0(t_i) \right\|_2^2 + \left\| u_\theta(1, t_i) - g_1(t_i) \right\|_2^2 \right)$$
+$$
+\mathcal{L}(\theta) = \lambda_{PDE} \mathcal{L}_{PDE}(\theta) + \lambda_{IC} \mathcal{L}_{IC}(\theta) + \lambda_{BC} \mathcal{L}_{BC}(\theta)
+$$
+
+Automatic differentiation (reverse-mode autograd) computes exact differential operators:
+
+$$
+\begin{aligned}
+\mathcal{L}_{PDE}(\theta) &= \frac{1}{N_f} \sum_{i=1}^{N_f} \left\| \frac{\partial u_\theta}{\partial t}(x_i, t_i) - \alpha \frac{\partial^2 u_\theta}{\partial x^2}(x_i, t_i) - f(x_i, t_i) \right\|_2^2 \\
+\mathcal{L}_{IC}(\theta) &= \frac{1}{N_{ic}} \sum_{i=1}^{N_{ic}} \left\| u_\theta(x_i, 0) - u_0(x_i) \right\|_2^2 \\
+\mathcal{L}_{BC}(\theta) &= \frac{1}{N_{bc}} \sum_{i=1}^{N_{bc}} \left( \left\| u_\theta(0, t_i) - g_0(t_i) \right\|_2^2 + \left\| u_\theta(1, t_i) - g_1(t_i) \right\|_2^2 \right)
+\end{aligned}
+$$
 
 #### Residual-Based Adaptive Refinement (RAR) Algorithm
 Rather than uniform Monte Carlo collocation sampling, RAR dynamically densifies the collocation set in regions with high local residual:
-1. Train $u_\theta$ on current collocation set $\mathcal{S}_k$.
-2. Randomly sample a large pool of candidate points $\mathcal{S}_{cand} \sim \mathcal{U}(\Omega \times [0, T])$.
+1. Train $u_\theta$ on the current collocation set $\mathcal{S}_k$.
+2. Uniformly sample candidate points across the space-time domain $\mathcal{S}_{cand} \sim \mathcal{U}(\Omega \times [0, T])$.
 3. Compute residual magnitude $R(\mathbf{x}) = |\mathcal{N}[u_\theta(\mathbf{x})]|$.
 4. Select the top $K$ points satisfying:
-   $$\mathbf{x}^* = \arg\max_{\mathbf{x} \in \mathcal{S}_{cand}} R(\mathbf{x})$$
-5. Augment collocation set: $\mathcal{S}_{k+1} = \mathcal{S}_k \cup \{\mathbf{x}^*_{1:K}\}$, and resume gradient descent.
+
+$$
+\mathbf{x}^* = \arg\max_{\mathbf{x} \in \mathcal{S}_{cand}} R(\mathbf{x})
+$$
+
+5. Augment the collocation set: $\mathcal{S}_{k+1} = \mathcal{S}_k \cup \{\mathbf{x}^*_{1:K}\}$, and resume gradient descent.
 
 ---
 
 ### 3. Extended PINN (XPINN) Domain Decomposition
 For multi-scale problems or localized gradients, the physical domain $\Omega$ is decomposed into non-overlapping subdomains:
-$$\Omega = \Omega_1 \cup \Omega_2, \quad \Gamma_{int} = \overline{\Omega}_1 \cap \overline{\Omega}_2$$
+
+$$
+\Omega = \Omega_1 \cup \Omega_2, \quad \Gamma_{int} = \overline{\Omega}_1 \cap \overline{\Omega}_2
+$$
 
 Subdomain-specific neural networks $u_{\theta 1}$ and $u_{\theta 2}$ are trained in parallel, coupled across the internal interface $\Gamma_{int}$ through $C^0$ value and $C^1$ flux continuity penalties:
-$$\mathcal{L}_{XPINN}(\theta_1, \theta_2) = \mathcal{L}_{\Omega_1}(\theta_1) + \mathcal{L}_{\Omega_2}(\theta_2) + \lambda_{val} \mathcal{L}_{interface}^{val} + \lambda_{flux} \mathcal{L}_{interface}^{flux}$$
-$$\mathcal{L}_{interface}^{val} = \frac{1}{N_{int}} \sum_{i=1}^{N_{int}} \left\| u_{\theta 1}(\mathbf{x}_i^{int}) - u_{\theta 2}(\mathbf{x}_i^{int}) \right\|_2^2$$
-$$\mathcal{L}_{interface}^{flux} = \frac{1}{N_{int}} \sum_{i=1}^{N_{int}} \left\| \mathbf{n} \cdot \nabla u_{\theta 1}(\mathbf{x}_i^{int}) - \mathbf{n} \cdot \nabla u_{\theta 2}(\mathbf{x}_i^{int}) \right\|_2^2$$
+
+$$
+\mathcal{L}_{XPINN}(\theta_1, \theta_2) = \mathcal{L}_{\Omega_1}(\theta_1) + \mathcal{L}_{\Omega_2}(\theta_2) + \lambda_{val} \mathcal{L}_{interface}^{val} + \lambda_{flux} \mathcal{L}_{interface}^{flux}
+$$
+
+Where interface penalties enforce transmission conditions:
+
+$$
+\begin{aligned}
+\mathcal{L}_{interface}^{val} &= \frac{1}{N_{int}} \sum_{i=1}^{N_{int}} \left\| u_{\theta 1}(\mathbf{x}_i^{int}) - u_{\theta 2}(\mathbf{x}_i^{int}) \right\|_2^2 \\
+\mathcal{L}_{interface}^{flux} &= \frac{1}{N_{int}} \sum_{i=1}^{N_{int}} \left\| \mathbf{n} \cdot \nabla u_{\theta 1}(\mathbf{x}_i^{int}) - \mathbf{n} \cdot \nabla u_{\theta 2}(\mathbf{x}_i^{int}) \right\|_2^2
+\end{aligned}
+$$
 
 ---
 
 ### 4. Fourier Neural Operator (FNO)
 The Fourier Neural Operator directly parameterizes an integral kernel in frequency space to learn mappings between infinite-dimensional Banach spaces of functions:
-$$\mathcal{G}_\theta : \mathcal{A} \to \mathcal{U}, \quad a(x) \mapsto u(x)$$
+
+$$
+\mathcal{G}_\theta : \mathcal{A} \to \mathcal{U}, \quad a(x) \mapsto u(x)
+$$
 
 The FNO layer architecture updates iterative hidden representations $v_t \in \mathbb{R}^{d_v}$:
-$$v_{t+1}(x) = \sigma \left( W v_t(x) + (\mathcal{K}(a;\phi) v_t)(x) \right)$$
+
+$$
+v_{t+1}(x) = \sigma \left( W v_t(x) + (\mathcal{K}(a;\phi) v_t)(x) \right)
+$$
 
 Where $\mathcal{K}$ represents the non-local kernel integral computed via the Fast Fourier Transform (FFT):
-$$(\mathcal{K}(a;\phi) v_t)(x) = \mathcal{F}^{-1} \left( R_\phi \cdot (\mathcal{F} v_t) \right)(x)$$
+
+$$
+(\mathcal{K}(a;\phi) v_t)(x) = \mathcal{F}^{-1} \left( R_\phi \cdot (\mathcal{F} v_t) \right)(x)
+$$
+
 - $\mathcal{F}$ is the forward Discrete Fourier Transform (`torch.fft.rfft`).
 - $R_\phi \in \mathbb{C}^{k_{max} \times d_v \times d_v}$ is a learnable complex tensor truncating higher Fourier modes beyond $k_{max}$.
 - $\mathcal{F}^{-1}$ is the inverse Discrete Fourier Transform (`torch.fft.irfft`).
 
-Because the spectral weights $R_\phi$ are parameterized in the frequency domain, the learned model achieves zero-shot mesh super-resolution (resolution invariance).
+Because the spectral weights $R_\phi$ are parameterized in the frequency domain, the learned operator is continuous and resolution-invariant.
 
 ---
 
 ### 5. Deep Operator Network (DeepONet)
 Grounded in Chen & Chen's universal approximation theorem for non-linear continuous operators, DeepONet decouples functional inputs from spatial-temporal query coordinates:
 
-$$G(a)(y) \approx \sum_{k=1}^p b_k(a(x_1), a(x_2), \dots, a(x_m)) \cdot t_k(y) + b_0$$
+$$
+G(a)(y) \approx \sum_{k=1}^p b_k(a(x_1), a(x_2), \dots, a(x_m)) \cdot t_k(y) + b_0
+$$
 
 - **Branch Network** $\mathbf{b} : \mathbb{R}^m \to \mathbb{R}^p$: Encodes the input function $a$ sampled at fixed discrete sensor coordinates $\{x_1, \dots, x_m\}$.
 - **Trunk Network** $\mathbf{t} : \mathbb{R}^d \to \mathbb{R}^p$: Encodes continuous spatial-temporal query locations $y = (x, t)$.
@@ -156,12 +210,18 @@ $$G(a)(y) \approx \sum_{k=1}^p b_k(a(x_1), a(x_2), \dots, a(x_m)) \cdot t_k(y) +
 
 ### 6. Geometry-Aware Graph Neural Operator (GNO)
 To generalize across non-Euclidean computational domains (such as L-shaped structures, perforated plates, and fluid obstacles), GNO operates over unstructured node-link graphs:
-$$\mathcal{G} = (\mathcal{V}, \mathcal{E}), \quad \mathcal{V} = \{x_i\}_{i=1}^N, \quad \mathcal{E} = \{(i, j) : \|x_i - x_j\| \le r\}$$
+
+$$
+\mathcal{G} = (\mathcal{V}, \mathcal{E}), \quad \mathcal{V} = \{x_i\}_{i=1}^N, \quad \mathcal{E} = \{(i, j) : \|x_i - x_j\| \le r\}
+$$
 
 Spatial message passing propagates local differential operators across graph neighborhoods:
-$$h_i^{(l+1)} = \sigma \left( W_{self} h_i^{(l)} + \frac{1}{|\mathcal{N}(i)|} \sum_{j \in \mathcal{N}(i)} \kappa_\phi(x_i, x_j) h_j^{(l)} \right)$$
 
-Where $\kappa_\phi(x_i, x_j)$ parameterizes the continuous kernel over pairwise Euclidean coordinate offsets, preserving rotational and translational symmetries.
+$$
+h_i^{(l+1)} = \sigma \left( W_{self} h_i^{(l)} + \frac{1}{|\mathcal{N}(i)|} \sum_{j \in \mathcal{N}(i)} \kappa_\phi(x_i, x_j) h_j^{(l)} \right)
+$$
+
+Where $\kappa_\phi(x_i, x_j)$ parameterizes the continuous kernel over pairwise coordinate offsets, preserving rotational and translational symmetries.
 
 ---
 
@@ -169,27 +229,53 @@ Where $\kappa_\phi(x_i, x_j)$ parameterizes the continuous kernel over pairwise 
 For high-consequence engineering decisions, deterministic point predictions are replaced by posterior probability distributions $p(\theta | \mathcal{D})$.
 
 #### Variational Inference (Monte Carlo Dropout)
-Approximates the intractable posterior distribution $p(\theta | \mathcal{D})$ using a variational distribution $q_\phi(\theta)$ by minimizing the Kullback-Leibler (KL) divergence:
-$$\text{ELBO}(\phi) = \mathbb{E}_{q_\phi(\theta)} \left[ \log p(\mathcal{D} | \theta) \right] - D_{KL}(q_\phi(\theta) \;||\; p(\theta))$$
+Approximates the intractable posterior distribution $p(\theta | \mathcal{D})$ using a variational distribution $q_\phi(\theta)$ by maximizing the Evidence Lower Bound (ELBO):
+
+$$
+\text{ELBO}(\phi) = \mathbb{E}_{q_\phi(\theta)} \left[ \log p(\mathcal{D} | \theta) \right] - D_{KL}(q_\phi(\theta) \;||\; p(\theta))
+$$
+
 Stochastic test-time forward passes yield predictive mean $\mu(x)$ and epistemic uncertainty variance $\sigma^2(x)$:
-$$\mu(x) = \frac{1}{M} \sum_{m=1}^M u_{\theta^{(m)}}(x), \quad \sigma^2(x) = \frac{1}{M} \sum_{m=1}^M \left( u_{\theta^{(m)}}(x) - \mu(x) \right)^2$$
+
+$$
+\begin{aligned}
+\mu(x) &= \frac{1}{M} \sum_{m=1}^M u_{\theta^{(m)}}(x) \\
+\sigma^2(x) &= \frac{1}{M} \sum_{m=1}^M \left( u_{\theta^{(m)}}(x) - \mu(x) \right)^2
+\end{aligned}
+$$
 
 #### Hamiltonian Monte Carlo (HMC)
-For inverse parameter fields $E(x)$ in $-\frac{d}{dx}\left(E(x)\frac{du}{dx}\right) = f(x)$, HMC explores the posterior geometry without random walk diffusion using auxiliary momentum variables $p \sim \mathcal{N}(0, M)$:
-$$H(E, p) = U(E) + \frac{1}{2} p^T M^{-1} p, \quad U(E) = -\log p(\mathcal{D}_{obs} | E) - \log p(E)$$
+For inverse parameter fields $E(x)$ in $-\frac{d}{dx}\left(E(x)\frac{du}{dx}\right) = f(x)$, HMC explores the posterior geometry using auxiliary momentum variables $p \sim \mathcal{N}(0, M)$:
+
+$$
+\begin{aligned}
+H(E, p) &= U(E) + \frac{1}{2} p^T M^{-1} p \\
+U(E) &= -\log p(\mathcal{D}_{obs} | E) - \log p(E)
+\end{aligned}
+$$
+
 Hamiltonian trajectories are integrated via symplectic leapfrog steps, followed by a Metropolis-Hastings acceptance step:
-$$\alpha = \min\left(1, \; \exp\left(-H(E^*, p^*) + H(E, p)\right)\right)$$
+
+$$
+\alpha = \min\left(1, \; \exp\left(-H(E^*, p^*) + H(E, p)\right)\right)
+$$
 
 ---
 
 ### 8. Score-Based Diffusion Inverse Sampler
-As an ultrafast generative surrogate for full Markov Chain Monte Carlo, a score-based denoising diffusion probabilistic model (DDPM) is trained on PDE solution fields.
+As a fast generative surrogate for full Markov Chain Monte Carlo, a score-based denoising diffusion probabilistic model (DDPM) is trained on PDE solution fields.
 
 The forward diffusion process progressively injects Gaussian noise according to an Itô Stochastic Differential Equation (SDE):
-$$dx = f(x, t) dt + g(t) dw$$
+
+$$
+dx = f(x, t) dt + g(t) dw
+$$
 
 The reverse-time generative SDE samples parameter field posteriors conditioned on sparse, noisy measurements $y$:
-$$dx = \left[ f(x, t) - g(t)^2 \nabla_x \log p_t(x | y) \right] dt + g(t) d\bar{w}$$
+
+$$
+dx = \left[ f(x, t) - g(t)^2 \nabla_x \log p_t(x | y) \right] dt + g(t) d\bar{w}
+$$
 
 The conditional score function $\nabla_x \log p_t(x | y)$ is estimated using a time-conditioned neural score network $s_\theta(x_t, t, y)$, enabling millisecond-scale posterior ensemble sampling.
 
@@ -198,24 +284,39 @@ The conditional score function $\nabla_x \log p_t(x | y)$ is estimated using a t
 ### 9. Multi-Fidelity Operator Learning
 When high-fidelity simulation or experimental data is scarce, Multi-Fidelity DeepONet leverages abundant low-fidelity data $u_{lo}$ (e.g. coarse-mesh FDM) and sparse high-fidelity data $u_{hi}$:
 
-$$u_{hi}(x) = \alpha(x) \cdot u_{lo}(x) + \delta(x)$$
+$$
+u_{hi}(x) = \alpha(x) \cdot u_{lo}(x) + \delta(x)
+$$
 
 - $\alpha(x)$ is a multiplicative cross-fidelity scaling factor.
 - $\delta(x)$ is an additive residual correction network parameterized as an MLP:
-$$\mathcal{L}_{MF}(\theta) = \frac{1}{N_{hi}} \sum_{i=1}^{N_{hi}} \left\| u_{hi}(x_i) - \left( \alpha u_{lo}(x_i) + \delta_\theta(x_i) \right) \right\|_2^2$$
+
+$$
+\mathcal{L}_{MF}(\theta) = \frac{1}{N_{hi}} \sum_{i=1}^{N_{hi}} \left\| u_{hi}(x_i) - \left( \alpha u_{lo}(x_i) + \delta_\theta(x_i) \right) \right\|_2^2
+$$
 
 ---
 
 ### 10. Bayesian Optimal Experimental Design (BOED)
-BOED automates active sensor placement to minimize parameter uncertainty with minimal expensive sensor installations.
+BOED automates active sensor placement to minimize parameter uncertainty with minimal sensor installations.
 
 The optimal sensor design $d^* = \{x_1, \dots, x_k\}$ maximizes the Expected Information Gain (EIG), defined as the expected mutual information between the parameter state $\theta$ and future sensor observations $y$:
-$$d^* = \arg\max_{d \in \mathcal{D}} \mathbb{E}_{y | d} \left[ D_{KL} \left( p(\theta | y, d) \;||\; p(\theta) \right) \right]$$
+
+$$
+d^* = \arg\max_{d \in \mathcal{D}} \mathbb{E}_{y | d} \left[ D_{KL} \left( p(\theta | y, d) \;||\; p(\theta) \right) \right]
+$$
 
 Using spatial Gaussian process covariance kernel updates:
-$$\text{Var}[E(x) | d] = k(x, x) - \mathbf{k}(x, d) \left[ \mathbf{K}(d, d) + \sigma_{noise}^2 I \right]^{-1} \mathbf{k}(d, x)$$
+
+$$
+\text{Var}[E(x) | d] = k(x, x) - \mathbf{k}(x, d) \left[ \mathbf{K}(d, d) + \sigma_{noise}^2 I \right]^{-1} \mathbf{k}(d, x)
+$$
+
 Sensors are sequentially placed at the global spatial maximum of the posterior variance field:
-$$x_{next} = \arg\max_{x \in \Omega} \text{Var}[E(x) | d_{current}]$$
+
+$$
+x_{next} = \arg\max_{x \in \Omega} \text{Var}[E(x) | d_{current}]
+$$
 
 ---
 
@@ -226,7 +327,10 @@ A shared operator foundation backbone is pretrained on synthetic trajectories ac
 3. **1D Hyperbolic Wave Dynamics**: $u_{tt} - c^2 u_{xx} = 0$
 
 Fine-tuning downstream tasks on novel coefficient regimes exhibits steep power-law data-efficiency gains:
-$$\text{Error}(N) \approx C \cdot N^{-\beta_{pretrain}}, \quad \beta_{pretrain} \gg \beta_{scratch}$$
+
+$$
+\text{Error}(N) \approx C \cdot N^{-\beta_{pretrain}}, \quad \beta_{pretrain} \gg \beta_{scratch}
+$$
 
 ---
 
