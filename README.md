@@ -5,7 +5,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-green.svg)](https://fastapi.tiangolo.com/)
 [![React 18](https://img.shields.io/badge/React-18-61DAFB.svg)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-8.3%2B-646CFF.svg)](https://vitejs.dev/)
-[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live-brightgreen.svg)](https://frontend-blush-eight-92.vercel.app)
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live-brightgreen.svg)](https://neural-pde-bench.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 An advanced, research-grade **Physics-Informed Neural Network (PINN)** and **Operator Learning (FNO, DeepONet, GNO)** software platform for solving forward/inverse Partial Differential Equations (PDEs) with full **Uncertainty Quantification (UQ)**, Bayesian inference, and score-based diffusion modeling.
@@ -13,8 +13,8 @@ An advanced, research-grade **Physics-Informed Neural Network (PINN)** and **Ope
 ---
 
 ## 🌐 Live Deployments & Repository Links
-- 🚀 **Vercel Live Production App**: [https://frontend-blush-eight-92.vercel.app](https://frontend-blush-eight-92.vercel.app)
-- ⚡ **Vercel Direct Deployment URL**: [https://frontend-phersmw41-10tans-projects.vercel.app](https://frontend-phersmw41-10tans-projects.vercel.app)
+- 🚀 **Vercel Live Production App**: [https://neural-pde-bench.vercel.app](https://neural-pde-bench.vercel.app)
+- ⚡ **Vercel Team Deployment URL**: [https://neural-pde-bench-10tans-projects.vercel.app](https://neural-pde-bench-10tans-projects.vercel.app)
 - 🐙 **GitHub Repository**: [https://github.com/10tan/neural-pde-bench](https://github.com/10tan/neural-pde-bench)
 
 ---
